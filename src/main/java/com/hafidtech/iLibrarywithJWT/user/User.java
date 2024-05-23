@@ -1,13 +1,14 @@
 package com.hafidtech.iLibrarywithJWT.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.hafidtech.iLibrarywithJWT.role.Role;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 @Entity
 @Getter
@@ -23,5 +24,15 @@ public class User {
     @NaturalId(mutable = true)
     private String email;
     private String password;
-    private String role;
+
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH
+    })
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles = new HashSet<>();
 }
