@@ -31,7 +31,8 @@ public class LibrarySecurityConfig {
             "/books/all",
             "/books/book/{id}",
             "/users/**",
-            "/authenticate/**"
+            "/authenticate/**",
+            "/roles/**"
     };
 
     @Autowired

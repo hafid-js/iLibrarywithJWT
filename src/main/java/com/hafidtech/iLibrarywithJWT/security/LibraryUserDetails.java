@@ -21,7 +21,7 @@ public class LibraryUserDetails implements UserDetails {
     public LibraryUserDetails(User user) {
         userName = user.getEmail();
         password = user.getPassword();
-        authorities = Arrays.stream(user.getRole()
+        authorities = Arrays.stream(user.getRoles().toString()
                 .split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

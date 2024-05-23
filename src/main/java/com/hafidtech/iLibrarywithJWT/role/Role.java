@@ -1,5 +1,6 @@
 package com.hafidtech.iLibrarywithJWT.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hafidtech.iLibrarywithJWT.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Role {
 
     @NaturalId
     private String name;
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users = new HashSet<>();
 

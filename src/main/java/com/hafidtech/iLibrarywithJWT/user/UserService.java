@@ -4,12 +4,16 @@ package com.hafidtech.iLibrarywithJWT.user;
 
 import com.hafidtech.iLibrarywithJWT.exception.UserAlreadyExistsException;
 import com.hafidtech.iLibrarywithJWT.exception.UserNotFoundException;
+import com.hafidtech.iLibrarywithJWT.role.Role;
+import com.hafidtech.iLibrarywithJWT.role.RoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,10 +21,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
-    @Autowired
+
     private final UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final RoleRepository roleRepository;
 
     @Override
     public User add(User user) {
@@ -29,6 +35,8 @@ public class UserService implements IUserService {
             throw new UserAlreadyExistsException("A user with " +user.getEmail() +" already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleRepository.findByName("ROLE_USER").get();
+        user.setRoles(Collections.singletonList(role));
         return userRepository.save(user);
     }
 
@@ -40,7 +48,8 @@ public class UserService implements IUserService {
                         user.getId(),
                         user.getFirstName(),
                         user.getLastName(),
-                        user.getEmail())).collect(Collectors.toList());
+                        user.getEmail(),
+                        new HashSet<>(user.getRoles()))).collect(Collectors.toList());
     }
 
     @Override
@@ -57,7 +66,7 @@ public class UserService implements IUserService {
 
     @Override
     public User update(User user) {
-        user.setRole(user.getRole());
+        user.setRoles(user.getRoles());
         return userRepository.save(user);
     }
 }
